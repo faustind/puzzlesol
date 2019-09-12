@@ -5,6 +5,8 @@
 # Note: passe the test cases present in problem statement and
 #       test cases available on UDebug but get WA on online judge.
 
+# Fixed: should detect end of input with EOFError
+
 def set_reg(reg, ram, d, n):
     reg[d] = n
     reg[d] %= 1000
@@ -95,11 +97,14 @@ for case_count in range(ncase):
 
     i = 0
     while True:
-        ins = input()
-        if ins == '':
+        try:
+            ins = input()
+            if ins == '':
+                break
+            ram[i] = ins
+            i += 1
+        except EOFError:
             break
-        ram[i] = ins
-        i += 1
 
     icount = interpreter(reg, ram)
 
