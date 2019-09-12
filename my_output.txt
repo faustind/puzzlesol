@@ -1,9 +1,1 @@
-16
-
-1000
-
-26
-
-835
-
-3007
+Game #1: no king is in check.
