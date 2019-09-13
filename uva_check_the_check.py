@@ -3,17 +3,15 @@
 # UVa 10196
 
 
-# Note: WA
-
 import collections
 
 Piece = collections.namedtuple('Piece', ['rank', 'row', 'col'])
 def on_board(pos):
     """Return True if pos is on the board"""
-    return (0 <= pos[0] <= 7) and (0 <= pos[1] <= 7)
+    return ((0 <= pos[0] <= 7) and (0 <= pos[1] <= 7))
 
 def capture_moves(piece, king):
-    """Return coodinate where piece can capture."""
+    """Does the piece capture the king ?"""
     if piece.rank == 'p':
         return (king.row, king.col) in { pos for pos in [
                                  (piece.row+1, piece.col-1),
@@ -34,19 +32,10 @@ def capture_moves(piece, king):
                                  (piece.row+2, piece.col-1), (piece.row+2, piece.col+1)]
                 if on_board(pos) }
 
-    if piece.rank in ('k', 'K'):
-        return (king.row, king.col) in { pos for pos in [
-                                 (piece.row-1, piece.col-1),(piece.row+1, piece.col-1),
-                                 (piece.row-1, piece.col), (piece.row+1, piece.col),
-                                 (piece.row-1, piece.col+1), (piece.row+1, piece.col+1),
-                                 (piece.row, piece.col-1), (piece.row, piece.col+1)]
-                if on_board(pos) }
-
     if piece.rank in ('b', 'B', 'Q', 'q'):
         diag45 = piece.row + piece.col
         diag135 = piece.row - piece.col
         if king.row + king.col == diag45:
-            # check it doesn't jump any piece
             below, above = (piece, king) if piece.row > king.row else (king, piece)
             for (r, c) in zip(range(above.row+1, below.row),
                               range(above.col-1, below.col, -1)):
@@ -107,17 +96,19 @@ while True:
     check = False
     for row in board:
         for piece in row:
-            if piece != '.':
+            if piece not in ['.', k, K]:
                 if piece.rank.islower():
                     if capture_moves(piece, K):
                         print('Game #{}: white king is in check.'.format(game))
                         check = True
+                        break
                 elif piece.rank.isupper():
                     if capture_moves(piece, k):
                         print('Game #{}: black king is in check.'.format(game))
                         check = True
-            if check:
-                break
+                        break
+        if check:
+            break
 
     if not check:
         print('Game #{}: no king is in check.'.format(game))
