@@ -1,11 +1,11 @@
 -- HackerRank `Functions or Not?`
+
 import Control.Monad
 import Data.List (sort)
 
 
 
 isFunction :: [(Int, Int)] -> Bool
--- todo: sort xys
 isFunction = decide . sort 
     where
         decide xys = all (\((a,b), (c,d)) -> (a == c && b == d) || a /= c)
