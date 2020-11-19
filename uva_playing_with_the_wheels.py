@@ -2,58 +2,49 @@
 
 # uva 10067
 
-# TLE
-# I don't get it sniff... Hahaha sniff...
-
 import collections
 
-# bfs
-def bfs(start: int):
-    """bfs.
-    TODO: initialize discovered[], processed[] and parent[]
-    """
+
+def bfs(start):
     q = collections.deque()
 
     q.append(start)
-    discovered[nv(start)] = 0
+    discovered[start] = 0
 
     while q:
         v = q.pop()
-        if nv(v) not in forbidden:
-            for ne in adj(v):
-                y = ne
-                if (not discovered[nv(y)]) and (nv(y) not in forbidden):
-                    q.appendleft(y)
-                    discovered[nv(y)] = discovered[nv(v)] + 1
-                if y == end:
-                    return
+        if v == end:
+            return
+        for y in adj(v):
+            if discovered[y]:
+                continue
+            discovered[y] = discovered[v] + 1
+            if y not in forbidden:
+                q.appendleft(y)
 
-def left(i: int):
-    if i == 0:
-        return 9
-    else:
-        return i - 1
 
-def right(i: int):
-    if i == 9:
-        return 0
-    else:
-        return i + 1
-
-def adj(n: list):
+def adj(n):
     a,b,c,d = n
-    return [[left(a), b, c, d],
-            [right(a), b, c, d],
-            [a, left(b), c, d],
-            [a, right(b), c, d],
-            [a, b, left(c), d],
-            [a, b, right(c), d],
-            [a, b, c, left(d)],
-            [a, b, c, right(d)]]
+    def left(i):
+        if i == 0:
+            return 9
+        else:
+            return i - 1
 
-def nv(n):
-    return int(''.join(map(str, n)))
+    def right(i):
+        if i == 9:
+            return 0
+        else:
+            return i + 1
 
+    return [(left(a), b, c, d),
+            (right(a), b, c, d),
+            (a, left(b), c, d),
+            (a, right(b), c, d),
+            (a, b, left(c), d),
+            (a, b, right(c), d),
+            (a, b, c, left(d)),
+            (a, b, c, right(d))]
 
 if __name__ == "__main__":
     c = int(input())
@@ -61,23 +52,31 @@ if __name__ == "__main__":
     while c:
         c -= 1
 
-        input()
+        try:
+            input()
+        except Exception:
+            break
 
-        start = list(map(int, input().split()))
-        end = list(map(int, input().split()))
-
+        start = tuple(int(c) for c in input().split())
+        end = tuple(int(c) for c in input().split())
 
         fn = int(input())
 
-        discovered = [False] * 10000
+        discovered = collections.defaultdict(lambda: None)
 
-        forbidden = []
+        forbidden = set()
         for _ in range(fn):
-            forbidden.append ( int(''.join(input().split())) )
+            forbidden.add ( tuple(int(c) for c in input().split()) )
 
-        if (nv(end) in forbidden) or (nv(start) in forbidden):
-            print('-1')
+        if end == start:
+            print(0)
+            continue
+
+        if end in forbidden:
+            print(-1)
+            continue
+
 
         bfs(start)
 
-        print(discovered[nv(end)] or -1)
+        print(discovered[end] if discovered[end] is not None else -1)
